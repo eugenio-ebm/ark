@@ -9,6 +9,7 @@ type Eval = Identity
 eval :: Expr -> Int
 eval expr = runIdentity (eval' expr)
   where
+    eval' :: Expr -> Eval Int
     eval' (Add lhs rhs) = (+) <$> eval' lhs <*> eval' rhs
     eval' (Sub lhs rhs) = (-) <$> eval' lhs <*> eval' rhs
     eval' (Int v) = pure v
