@@ -1,6 +1,6 @@
-module Ark.Eval ( eval ) where
+module Ark.Surface.Eval ( eval ) where
 
-import Ark.Expr
+import Ark.Surface.Expr
 
 import Control.Monad.Identity
 

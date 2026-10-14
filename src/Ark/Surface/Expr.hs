@@ -1,4 +1,4 @@
-module Ark.Expr (
+module Ark.Surface.Expr (
   Expr(..),
   BinOp(..),
   prettyExpr

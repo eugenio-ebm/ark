@@ -1,8 +1,8 @@
 {
-module Ark.Parser ( parseExpr ) where
+module Ark.Surface.Parser ( parseExpr ) where
 
-import Ark.Lexer ( Token(..) )
-import Ark.Expr
+import Ark.Surface.Lexer ( Token(..) )
+import Ark.Surface.Expr
 }
 
 %name parseExpr
