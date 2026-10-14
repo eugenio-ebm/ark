@@ -1,8 +1,8 @@
 {
-module Ark.Surface.Parser ( parseExpr ) where
+module Ark.Surface.Parser ( parse ) where
 
-import Ark.Surface.Lexer ( Token(..) )
-import Ark.Surface.Expr
+import Ark.Surface.Lexer ( Token(..), lexTokens )
+import Ark.Surface.Expr ( Expr(..), BinOp(..) )
 }
 
 %name parseExpr
@@ -43,4 +43,7 @@ Expr2 :: { Expr }
 {
 parseError :: [Token] -> a
 parseError ts = error $ "Error at tokens: " ++ show ts
+
+parse :: String -> Expr
+parse = parseExpr . lexTokens
 }
