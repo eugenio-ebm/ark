@@ -28,8 +28,8 @@ Binop :: { Expr }
       	 : Binop1			{ $1 }
 
 Binop1 :: { Expr }
-          : Binop1 '+' Binop2		{ Add $1 $3 }
-          | Binop1 '-' Binop2		{ Sub $1 $3 }
+          : Binop1 '+' Binop2		{ BinOp Add $1 $3 }
+          | Binop1 '-' Binop2		{ BinOp Sub $1 $3 }
 	  | Binop2     			{ $1 }
 
 Binop2 :: { Expr }

@@ -1,18 +1,23 @@
 module Ark.Expr (
   Expr(..),
+  BinOp(..),
   prettyExpr
   ) where
 
 data Expr
-  = Add Expr Expr
-  | Sub Expr Expr
+  = BinOp BinOp Expr Expr
   | Int Int
   deriving (Eq, Show)
 
+data BinOp
+  = Add
+  | Sub
+  deriving (Eq, Show)
+
 prettyExpr :: Expr -> String
-prettyExpr (Add lhs rhs) =
+prettyExpr (BinOp Add lhs rhs) =
   prettyExpr lhs ++ " + " ++ prettyExpr rhs
-prettyExpr (Sub lhs rhs) =
+prettyExpr (BinOp Sub lhs rhs) =
   prettyExpr lhs ++ " - " ++ prettyExpr rhs
 prettyExpr (Int v)
   | v >= 0 = show v

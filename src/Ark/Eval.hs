@@ -1,6 +1,6 @@
-module Ark.Eval where
+module Ark.Eval ( eval ) where
 
-import Ark.Expr ( Expr(..) )
+import Ark.Expr
 
 import Control.Monad.Identity
 
@@ -10,6 +10,6 @@ eval :: Expr -> Int
 eval expr = runIdentity (eval' expr)
   where
     eval' :: Expr -> Eval Int
-    eval' (Add lhs rhs) = (+) <$> eval' lhs <*> eval' rhs
-    eval' (Sub lhs rhs) = (-) <$> eval' lhs <*> eval' rhs
+    eval' (BinOp Add lhs rhs) = (+) <$> eval' lhs <*> eval' rhs
+    eval' (BinOp Sub lhs rhs) = (-) <$> eval' lhs <*> eval' rhs
     eval' (Int v) = pure v
