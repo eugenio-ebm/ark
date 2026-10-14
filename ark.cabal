@@ -134,6 +134,7 @@ test-suite ark-test
 
     -- Test dependencies.
     build-depends:
+                  QuickCheck >= 2.18.0.0,
                   ark,
                   array >= 0.5.8.0,
                   base ^>=4.18.3.0,
