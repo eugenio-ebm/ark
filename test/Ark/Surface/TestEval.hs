@@ -1,6 +1,6 @@
 module Ark.Surface.TestEval ( testEval ) where
 
-import Ark.Surface.Eval
+import Ark.Surface.Eval ( eval )
 
 import Ark.Surface.Expr ( Expr(..), BinOp(..) )
 

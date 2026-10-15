@@ -1,8 +1,8 @@
 module Ark.Surface.Eval ( eval ) where
 
-import Ark.Surface.Expr
+import Ark.Surface.Expr ( Expr(..), BinOp(..) )
 
-import Control.Monad.Identity
+import Control.Monad.Identity ( Identity, runIdentity )
 
 type Eval = Identity
 
