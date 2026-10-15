@@ -1,9 +1,10 @@
-module Ark.Surface.TestExpr ( testExpr ) where
+module Ark.Surface.TestPrettyExpr ( testPrettyExpr ) where
 
-import Ark.Surface.Expr
+import Ark.Surface.PrettyExpr ( prettyExpr )
 
 import Ark.Surface.Parser ( parse )
 import Ark.Surface.Eval ( eval )
+import Ark.Surface.Expr ( Expr(..), BinOp(..) )
 
 import Test.QuickCheck
 import Test.QuickCheck.Monadic
@@ -36,6 +37,6 @@ prop_prettyExpr_parseAndEval expr = monadicIO $ do
 
   assertWith (actual == expected) "prop_prettyExpr_parseAndEval"
 
-testExpr :: IO ()
-testExpr = do
+testPrettyExpr :: IO ()
+testPrettyExpr = do
   quickCheck prop_prettyExpr_parseAndEval
