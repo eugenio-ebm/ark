@@ -1,4 +1,9 @@
 module Main (main) where
 
+import Ark.Surface.TestExpr ( testExpr )
+import Ark.Surface.TestEval ( testEval )
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented."
+main = do
+  testExpr
+  testEval
