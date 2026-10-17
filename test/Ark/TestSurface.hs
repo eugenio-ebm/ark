@@ -10,7 +10,6 @@ instance Arbitrary Expr where
     where
       genExpr :: [String] -> Int -> Gen Expr
       genExpr _ 0 = genInt
-      genExpr [] n = oneof [genLet [] n, genBinOp [] n, genInt]
       genExpr xs n = oneof [genLet xs n, genBinOp xs n, genVar xs, genInt]
 
       genLet xs n = do
@@ -26,14 +25,21 @@ instance Arbitrary Expr where
           rhs = subExpr
           subExpr = genExpr xs (n `div` 2)
 
+      genVar [] = genInt
       genVar xs = Var <$> elements xs
 
       genInt = Int <$> arbitrary
 
-  shrink (Int v) = Int <$> shrink v
+  shrink (Let x e e') = [e, e']
+                        ++ (Let x <$> shrink e <*> pure e')
+                        ++ (Let x e <$> shrink e')
+                        ++ (Let x <$> shrink e <*> shrink e')
   shrink (BinOp op lhs rhs) = [lhs, rhs]
                               ++ (BinOp op <$> shrink lhs <*> pure rhs)
                               ++ (BinOp op lhs <$> shrink rhs)
+                              ++ (BinOp op <$> shrink lhs <*> shrink rhs)
+  shrink (Var x) = []
+  shrink (Int v) = Int <$> shrink v
 
 prop_eval_justInt :: Int -> Property
 prop_eval_justInt x = monadicIO $ do
