@@ -4,10 +4,12 @@ module Ark.Surface (
   eval,
   ) where
 
-import Control.Monad.Identity ( Identity, runIdentity )
+import Control.Monad.Reader ( Reader, runReader, ask, local )
 
 data Expr
-  = BinOp BinOp Expr Expr
+  = Let String Expr Expr
+  | BinOp BinOp Expr Expr
+  | Var String
   | Int Int
   deriving (Eq, Show)
 
@@ -17,9 +19,17 @@ data BinOp
   deriving (Eq, Show)
 
 eval :: Expr -> Int
-eval expr = runIdentity (eval' expr)
+eval expr = runReader (eval' expr) []
   where
-    eval' :: Expr -> Identity Int
+    eval' :: Expr -> Reader [(String, Int)] Int
+    eval' (Let x e e') = do
+      v <- eval' e
+      local ((x, v):) (eval' e')
     eval' (BinOp Add lhs rhs) = (+) <$> eval' lhs <*> eval' rhs
     eval' (BinOp Sub lhs rhs) = (-) <$> eval' lhs <*> eval' rhs
+    eval' (Var x) = do
+      env <- ask
+      case lookup x env of
+        Just v -> return v
+        Nothing -> error ("Unbounded variable: " ++ x)
     eval' (Int v) = pure v

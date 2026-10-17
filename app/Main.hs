@@ -5,9 +5,12 @@ import Ark.Surface ( eval )
 
 import Control.Monad ( forever, when )
 import System.Exit
+import System.IO
 
 main :: IO ()
 main = forever $ do
+  hSetBuffering stdout NoBuffering
+
   putStr "ark> "
   s <- getLine
   when (s == "") exitSuccess
