@@ -1,9 +1,7 @@
 module Main (main) where
 
-import Ark.Surface.TestPrettyExpr ( testPrettyExpr )
-import Ark.Surface.TestEval ( testEval )
+import Ark.TestSurface ( testSurface )
 
 main :: IO ()
 main = do
-  testPrettyExpr
-  testEval
+  testSurface

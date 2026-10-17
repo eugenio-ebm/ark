@@ -1,6 +1,21 @@
-module Ark.Surface.PrettyExpr ( prettyExpr ) where
+module Ark.Surface (
+  Expr(..),
+  BinOp(..),
+  prettyExpr,
+  eval,
+  ) where
 
-import Ark.Surface.Expr ( Expr(..), BinOp(..) )
+import Control.Monad.Identity ( Identity, runIdentity )
+
+data Expr
+  = BinOp BinOp Expr Expr
+  | Int Int
+  deriving (Eq, Show)
+
+data BinOp
+  = Add
+  | Sub
+  deriving (Eq, Show)
 
 prettyExpr :: Expr -> String
 prettyExpr expr = p (getN expr) expr
@@ -21,3 +36,11 @@ prettyExpr expr = p (getN expr) expr
     p _ (Int v)
       | v >= 0 = show v
       | otherwise = "(" ++ show v ++ ")"
+
+eval :: Expr -> Int
+eval expr = runIdentity (eval' expr)
+  where
+    eval' :: Expr -> Identity Int
+    eval' (BinOp Add lhs rhs) = (+) <$> eval' lhs <*> eval' rhs
+    eval' (BinOp Sub lhs rhs) = (-) <$> eval' lhs <*> eval' rhs
+    eval' (Int v) = pure v

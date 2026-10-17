@@ -1,7 +1,7 @@
 module Main where
 
-import Ark.Surface.Parser ( parse )
-import Ark.Surface.Eval ( eval )
+import Ark.Parser ( parse )
+import Ark.Surface ( eval )
 
 import Control.Monad ( forever, when )
 import System.Exit

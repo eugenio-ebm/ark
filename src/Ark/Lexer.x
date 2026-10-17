@@ -1,5 +1,5 @@
 {
-module Ark.Surface.Lexer ( Token(..), lexTokens ) where
+module Ark.Lexer ( Token(..), lexTokens ) where
 }
 
 %wrapper "basic"
