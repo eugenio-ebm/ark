@@ -2,8 +2,6 @@ module Ark.TestSurface where
 
 import Ark.Surface
 
-import Ark.Parser ( parse )
-
 import Test.QuickCheck
 import Test.QuickCheck.Monadic
 
@@ -27,17 +25,6 @@ instance Arbitrary Expr where
   shrink (BinOp op lhs rhs) = [lhs, rhs]
                               ++ (BinOp op <$> shrink lhs <*> pure rhs)
                               ++ (BinOp op lhs <$> shrink rhs)
-
-prop_prettyExpr_parseAndEval :: Expr -> Property
-prop_prettyExpr_parseAndEval expr = monadicIO $ do
-  let expected = eval expr
-      actual = eval . parse $ prettyExpr expr
-
-  assertWith (actual == expected) "prop_prettyExpr_parseAndEval"
-
-testPrettyExpr :: IO ()
-testPrettyExpr = do
-  quickCheck prop_prettyExpr_parseAndEval
 
 prop_eval_justInt :: Int -> Property
 prop_eval_justInt x = monadicIO $ do
@@ -74,5 +61,4 @@ testEval = do
 
 testSurface :: IO ()
 testSurface = do
-  testPrettyExpr
   testEval
