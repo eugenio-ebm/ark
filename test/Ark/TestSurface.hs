@@ -6,18 +6,27 @@ import Test.QuickCheck
 import Test.QuickCheck.Monadic
 
 instance Arbitrary Expr where
-  arbitrary = sized genExpr
+  arbitrary = sized (genExpr [])
     where
-      genExpr :: Int -> Gen Expr
-      genExpr 0 = genInt
-      genExpr n = oneof [genBinOp n, genInt]
+      genExpr :: [String] -> Int -> Gen Expr
+      genExpr _ 0 = genInt
+      genExpr [] n = oneof [genLet [] n, genBinOp [] n, genInt]
+      genExpr xs n = oneof [genLet xs n, genBinOp xs n, genVar xs, genInt]
 
-      genBinOp n = BinOp <$> op <*> lhs <*> rhs
+      genLet xs n = do
+        x <- elements ["x", "y"]
+        e <- genExpr xs (n `div` 2)
+        e' <- genExpr (x:xs) (n `div` 2)
+        return (Let x e e')
+
+      genBinOp xs n = BinOp <$> op <*> lhs <*> rhs
         where
           op = elements [Add, Sub]
           lhs = subExpr
           rhs = subExpr
-          subExpr = genExpr (n `div` 2)
+          subExpr = genExpr xs (n `div` 2)
+
+      genVar xs = Var <$> elements xs
 
       genInt = Int <$> arbitrary
 
