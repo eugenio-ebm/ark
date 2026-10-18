@@ -43,8 +43,9 @@ instance Arbitrary Expr where
   shrink (Var _) = []
   shrink (Int v) = Int <$> shrink v
 
-prop_normalize :: Expr -> Property
-prop_normalize expr = monadicIO $ do
+prop_normalize :: Fixed Expr -> Property
+prop_normalize fExpr = monadicIO $ do
+  let expr = getFixed fExpr
   let expected = eval expr
       actual = eval (normalize expr)
 
