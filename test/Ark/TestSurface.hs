@@ -2,6 +2,8 @@ module Ark.TestSurface where
 
 import Ark.Surface
 
+import Ark.Assert ( assertEqual )
+
 import Test.QuickCheck
 import Test.QuickCheck.Monadic
 
@@ -38,42 +40,47 @@ instance Arbitrary Expr where
                               ++ (BinOp op <$> shrink lhs <*> pure rhs)
                               ++ (BinOp op lhs <$> shrink rhs)
                               ++ (BinOp op <$> shrink lhs <*> shrink rhs)
-  shrink (Var x) = []
+  shrink (Var _) = []
   shrink (Int v) = Int <$> shrink v
 
-prop_eval_justInt :: Int -> Property
-prop_eval_justInt x = monadicIO $ do
+prop_normalize :: Expr -> Property
+prop_normalize expr = monadicIO $ do
+  let expected = eval expr
+      actual = eval (normalize expr)
+
+  assertEqual actual expected "prop_normalize"
+
+prop_eval_int :: Int -> Property
+prop_eval_int x = monadicIO $ do
   let expr = Int x
 
   let expected = x
       actual = eval expr
 
-  assertWith (actual == expected) "prop_eval_justInt"
+  assertEqual actual expected "prop_eval_int"
 
-prop_eval_addTwoInts :: Int -> Int -> Property
-prop_eval_addTwoInts x y = monadicIO $ do
-  let expr = BinOp Add (Int x) (Int y)
+prop_eval_add :: Expr -> Expr -> Property
+prop_eval_add lhs rhs = monadicIO $ do
+  let expr = BinOp Add lhs rhs
 
-  let expected = x + y
+  let expected = eval lhs + eval rhs
       actual = eval expr
 
-  assertWith (actual == expected) "prop_eval_addTwoInts"
+  assertEqual actual expected "prop_eval_add"
 
-prop_eval_subTwoInts :: Int -> Int -> Property
-prop_eval_subTwoInts x y = monadicIO $ do
-  let expr = BinOp Sub (Int x) (Int y)
+prop_eval_sub :: Expr -> Expr -> Property
+prop_eval_sub lhs rhs = monadicIO $ do
+  let expr = BinOp Sub lhs rhs
 
-  let expected = x - y
+  let expected = eval lhs - eval rhs
       actual = eval expr
 
-  assertWith (actual == expected) "prop_eval_subTwoInts"
-
-testEval :: IO ()
-testEval = do
-  quickCheck prop_eval_justInt
-  quickCheck prop_eval_addTwoInts
-  quickCheck prop_eval_subTwoInts
+  assertEqual actual expected "prop_eval_sub"
 
 testSurface :: IO ()
 testSurface = do
-  testEval
+  quickCheck prop_normalize
+
+  quickCheck prop_eval_int
+  quickCheck prop_eval_add
+  quickCheck prop_eval_sub
