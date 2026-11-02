@@ -15,11 +15,23 @@ import Syntax ( Expr(..), BinOp(..) )
     'let'	{ TokenLet }
     'in'	{ TokenIn }
     '='		{ TokenEq }
+
     '+'		{ TokenPlus }
     '-'		{ TokenMinus }
+    '*'		{ TokenStar }
+
+    '<'		{ TokenLt }
+
+    '++'	{ TokenPlusPlus }
+
     '('		{ TokenLP }
     ')'		{ TokenRP }
+
+    'true'	{ TokenTrue }
+    'false'	{ TokenFalse }
+
     id		{ TokenId $$ }
+    str		{ TokenStr $$ }
     int		{ TokenInt $$ }
 %%
 
@@ -32,20 +44,33 @@ Expr1 :: { Expr }
 
 Expr2 :: { Expr }
       	 : Binop				{ $1 }
-	 | Expr3	  			{ $1 }
 
 Binop :: { Expr }
       	 : Binop1				{ $1 }
 
 Binop1 :: { Expr }
-          : Binop1 '+' Expr3			{ BinOp Add $1 $3 }
-          | Binop1 '-' Expr3			{ BinOp Sub $1 $3 }
-	  | Expr3 '+' Expr3			{ BinOp Add $1 $3 }
-	  | Expr3 '-' Expr3			{ BinOp Sub $1 $3 }
+       	  : Binop2 '<' Binop2			{ BinOp Lt $1 $3 }
+	  | Binop1 '++' Binop2			{ BinOp Append $1 $3 }
+	  | Binop2     				{ $1 }
+
+Binop2 :: { Expr }
+          : Binop2 '+' Binop3			{ BinOp Add $1 $3 }
+          | Binop2 '-' Binop3			{ BinOp Sub $1 $3 }
+	  | Binop3				{ $1 }
+
+Binop3 :: { Expr }
+       	  : Binop3 '*' Binop4			{ BinOp Mul $1 $3 }
+	  | Binop4     				{ $1 }
+
+Binop4 :: { Expr }
+       	  : Expr3				{ $1 }
 
 Expr3 :: { Expr }
       	 : id					{ Var $1 }
+	 | str					{ Str $1 }
 	 | int					{ Int $1 }
+	 | 'true'				{ Bool True }
+	 | 'false'				{ Bool False }
       	 | '(' '-' int ')'			{ Int (-$3) }
 	 | '(' Expr ')'				{ $2 }
 
