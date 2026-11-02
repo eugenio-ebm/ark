@@ -1,0 +1,31 @@
+cabal-version:      3.0
+name:               bootstrap
+version:            0.1.0.0
+-- synopsis:
+-- description:
+license:            BSD-3-Clause
+license-file:       LICENSE
+author:             Eugenio
+maintainer:         eugenio.manansala@outlook.com
+-- copyright:
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+-- extra-source-files:
+
+common warnings
+    ghc-options: -Wall
+
+executable bootstrap
+    import:           warnings
+    main-is:          Main.hs
+    other-modules:
+        Lexer
+        Parser
+        Syntax
+    -- other-extensions:
+    build-tool-depends: alex:alex, happy:happy
+    build-depends:    array >= 0.5.8.0,
+                      base ^>=4.18.3.0,
+                      mtl >= 2.3.1
+    hs-source-dirs:   app
+    default-language: Haskell2010
