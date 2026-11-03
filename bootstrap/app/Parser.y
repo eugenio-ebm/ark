@@ -46,6 +46,7 @@ Expr :: { Expr }
 
 Expr1 :: { Expr }
       	 : 'let' id '=' Expr2 'in' Expr1	{ Let $2 $4 $6 }
+	 | '\\' id '->' Expr1			{ Lam $2 $4 }
 	 | Expr2				{ $1 }
 
 Expr2 :: { Expr }
@@ -98,7 +99,6 @@ Expr4 :: { Expr }
 	 | str					{ Str $1 }
 	 | int					{ Int $1 }
       	 | '(' '-' int ')'			{ Int (-$3) }
-	 | '\\' id '->' Expr			{ Lam $2 $4 }
 	 | '(' ')' 				{ Unit }
 	 | '(' Expr ')'				{ $2 }
 
