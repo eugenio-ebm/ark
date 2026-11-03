@@ -16,6 +16,7 @@ data Expr
   | Cons Id [Expr]
   | App Expr Expr
   | Var Id
+  | Char Char
   | Str String
   | Int Int
   | Unit
@@ -24,6 +25,9 @@ data Expr
 
 data Pat
   = PCons Id [Id]
+  | PInt Int
+  | PChar Char
+  | POtherwise
   deriving (Eq, Show)
   
 data BinOp
@@ -35,7 +39,7 @@ data BinOp
   deriving (Eq, Show)
 
 data Val
-  = VStr String
+  = VChar Char
   | VInt Int
   | VPrim String
   | VCons Id [Val]
@@ -44,7 +48,7 @@ data Val
   deriving (Eq)
 
 instance Show Val where
-  show (VStr s) = s
+  show (VChar c) = [c]
   show (VInt v) = show v
   show (VPrim p) = "<" ++ p ++ ">"
   show (VClo _ _ _) = "<closure>"

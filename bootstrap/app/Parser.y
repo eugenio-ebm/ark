@@ -32,9 +32,11 @@ import Syntax ( Id, Expr(..), Pat(..), BinOp(..) )
 
     'match'	{ TokenMatch }
     '|'		{ TokenBar }
+    'otherwise' { TokenOtherwise }
     'end'	{ TokenEnd }
 
     id		{ TokenId $$ }
+    char	{ TokenChar $$ }
     str		{ TokenStr $$ }
     int		{ TokenInt $$ }
 %%
@@ -59,6 +61,8 @@ MatchClause :: { (Pat, Expr) }
 
 Pat :: { Pat }
        : id ids					{ PCons $1 $2 }
+       | char					{ PChar $1 }
+       | 'otherwise'				{ POtherwise }
 
 ids :: { [Id] }
        :					{ [] }
@@ -90,6 +94,7 @@ Expr3 :: { Expr }
 
 Expr4 :: { Expr }
       	 : id					{ Var $1 }
+	 | char					{ Char $1 }
 	 | str					{ Str $1 }
 	 | int					{ Int $1 }
       	 | '(' '-' int ')'			{ Int (-$3) }

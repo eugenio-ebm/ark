@@ -1,3 +1,4 @@
+{-# LANGUAGE RecursiveDo #-}
 module Eval ( eval ) where
 
 import Syntax
@@ -9,8 +10,8 @@ eval :: Expr -> IO Val
 eval expr = runReaderT (eval' expr) prelude
   where
     eval' :: Expr -> ReaderT [(Id, Val)] IO Val
-    eval' (Let x e e') = do
-      v <- eval' e
+    eval' (Let x e e') = mdo
+      v <- local (\env -> (x, v) : env) (eval' e)
       local ((x, v):) (eval' e')
     eval' (Lam param body) = do
       env <- ask
@@ -27,6 +28,8 @@ eval expr = runReaderT (eval' expr) prelude
               , length args == length params -> do
                   let env' = zip params args
                   local (env' ++) (eval' e)
+            (VChar c, PChar c') | c == c' -> eval' e
+            (_, POtherwise) -> eval' e
             _ -> go v cs
     eval' (BinOp op lhs rhs) = do
       lhs' <- eval' lhs
@@ -36,7 +39,7 @@ eval expr = runReaderT (eval' expr) prelude
         (Sub, VInt l, VInt r) -> return $ VInt (l - r)
         (Mul, VInt l, VInt r) -> return $ VInt (l * r)
         (Lt, VInt l, VInt r) -> return $ VCons (if (l < r) then "True" else "False") []
-        (Append, VStr l, VStr r) -> return $ VStr (l ++ r)
+        -- (Append, VStr l, VStr r) -> return $ VStr (l ++ r)
         _ -> error $ "Unsupported operation " ++ show (op, lhs', rhs')
     eval' (Cons f args) = do
       vs <- mapM eval' args
@@ -49,7 +52,7 @@ eval expr = runReaderT (eval' expr) prelude
           local (\_ -> (param, arg):env) (eval' body)
         VPrim "read" -> do
           s <- liftIO $ getLine
-          return (VStr s) 
+          return $ foldr (\c s' -> VCons "Cons" [VChar c, s']) (VCons "Nil" []) s
         VPrim "print" -> do
           liftIO $ putStrLn (show arg)
           return arg
@@ -61,7 +64,8 @@ eval expr = runReaderT (eval' expr) prelude
       case lookup x env of
         Just v -> return v
         Nothing -> error $ "Unbounded variable: " ++ x
-    eval' (Str s) = return (VStr s)
+    eval' (Char c) = return (VChar c)
+    eval' (Str s) = return $ foldr (\c s' -> VCons "Cons" [VChar c, s']) (VCons "Nil" []) s
     eval' (Int v) = return (VInt v)
     eval' Unit = return VUnit
 

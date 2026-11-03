@@ -9,32 +9,34 @@ $digit = 0-9
 $alpha = [a-zA-Z]
 
 tokens :-
-    $white+	    ;
-    let	       	    { \_ -> TokenLet }
-    in	       	    { \_ -> TokenIn }
-    \=	       	    { \_ -> TokenEq }
+    $white+		    ;
+    let			    { \_ -> TokenLet }
+    in	       	      	    { \_ -> TokenIn }
+    \=	       	      	    { \_ -> TokenEq }
 
-    \+		    { \_ -> TokenPlus }
-    \-	       	    { \_ -> TokenMinus }
-    \*	       	    { \_ -> TokenStar }
+    \+		      	    { \_ -> TokenPlus }
+    \-	       	    	    { \_ -> TokenMinus }
+    \*	       	    	    { \_ -> TokenStar }
 
-    \<		    { \_ -> TokenLt }
+    \<		      	    { \_ -> TokenLt }
 
-    \++	       	    { \_ -> TokenPlusPlus }
+    \++	       	      	    { \_ -> TokenPlusPlus }
 
-    \(		    { \_ -> TokenLP }
-    \)	       	    { \_ -> TokenRP }
+    \(		      	    { \_ -> TokenLP }
+    \)	       	    	    { \_ -> TokenRP }
 
-    \\		    { \_ -> TokenBackslash }
-    \->		    { \_ -> TokenArr }
+    \\		      	    { \_ -> TokenBackslash }
+    \->		    	    { \_ -> TokenArr }
 
-    match	    { \_ -> TokenMatch }
-    \|		    { \_ -> TokenBar }
-    end		    { \_ -> TokenEnd }
+    match	      	    { \_ -> TokenMatch }
+    \|		      	    { \_ -> TokenBar }
+    otherwise		    { \_ -> TokenOtherwise }
+    end		      	    { \_ -> TokenEnd }
 
-    $alpha+    	    { \s -> TokenId s }
-    \" [^\"]* \"    { \s -> TokenStr (read s) }
-    $digit+    	    { \s -> TokenInt (read s) }
+    $alpha+    	      	    { \s -> TokenId s }
+    \' ($alpha|$digit) \'   { \s -> TokenChar (read s) }
+    \" [^\"]* \"       	    { \s -> TokenStr (read s) }
+    $digit+    	    	    { \s -> TokenInt (read s) }
 
 {
 data Token
@@ -58,9 +60,11 @@ data Token
 
   | TokenMatch
   | TokenBar
+  | TokenOtherwise
   | TokenEnd
 
   | TokenId String
+  | TokenChar Char
   | TokenStr String
   | TokenInt Int
   deriving (Eq, Show)
