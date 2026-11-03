@@ -1,8 +1,15 @@
 module Main where
 
-import qualified Lexer
-import qualified Parser
-import qualified Syntax
+import Parser ( parse )
+import Eval ( eval )
+
+evalFile :: String -> IO ()
+evalFile filename = do
+  s <- readFile filename
+  let expr = parse s
+  let v = eval expr
+  putStrLn (show v)
+
 
 main :: IO ()
 main = putStrLn "Hello, Haskell!"
