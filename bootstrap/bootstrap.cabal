@@ -22,6 +22,7 @@ executable bootstrap
         Lexer
         Parser
         Syntax
+        Eval
     -- other-extensions:
     build-tool-depends: alex:alex, happy:happy
     build-depends:    array >= 0.5.8.0,

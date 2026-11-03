@@ -28,6 +28,9 @@ tokens :-
     true       	    { \_ -> TokenTrue }
     false      	    { \_ -> TokenFalse }
 
+    \\		    { \_ -> TokenBackslash }
+    \->		    { \_ -> TokenArr }
+
     $alpha+    	    { \s -> TokenId s }
     \" [^\"]* \"    { \s -> TokenStr (read s) }
     $digit+    	    { \s -> TokenInt (read s) }
@@ -51,6 +54,9 @@ data Token
 
   | TokenTrue
   | TokenFalse
+
+  | TokenBackslash
+  | TokenArr
 
   | TokenId String
   | TokenStr String

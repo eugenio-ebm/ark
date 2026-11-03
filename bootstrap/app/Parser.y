@@ -30,6 +30,9 @@ import Syntax ( Expr(..), BinOp(..) )
     'true'	{ TokenTrue }
     'false'	{ TokenFalse }
 
+    '\\'	{ TokenBackslash }
+    '->'	{ TokenArr }
+
     id		{ TokenId $$ }
     str		{ TokenStr $$ }
     int		{ TokenInt $$ }
@@ -66,12 +69,17 @@ Binop4 :: { Expr }
        	  : Expr3				{ $1 }
 
 Expr3 :: { Expr }
+      	 : Expr3 Expr4				{ App $1 $2 }
+	 | Expr4				{ $1 }
+
+Expr4 :: { Expr }
       	 : id					{ Var $1 }
 	 | str					{ Str $1 }
 	 | int					{ Int $1 }
+      	 | '(' '-' int ')'			{ Int (-$3) }
 	 | 'true'				{ Bool True }
 	 | 'false'				{ Bool False }
-      	 | '(' '-' int ')'			{ Int (-$3) }
+	 | '\\' id '->' Expr			{ Lam $2 $4 }
 	 | '(' Expr ')'				{ $2 }
 
 {

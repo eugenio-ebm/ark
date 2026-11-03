@@ -9,7 +9,9 @@ type Id = String
 
 data Expr
   = Let Id Expr Expr
+  | Lam Id Expr
   | BinOp BinOp Expr Expr
+  | App Expr Expr
   | Var Id
   | Str String
   | Int Int
@@ -28,6 +30,8 @@ data Val
   = VStr String
   | VInt Int
   | VBool Bool
+  | VPrim String
+  | VClo String Expr [(Id, Val)]
   deriving (Eq)
 
 instance Show Val where
@@ -35,4 +39,6 @@ instance Show Val where
   show (VInt v) = show v
   show (VBool True) = "true"
   show (VBool False) = "false"
+  show (VPrim p) = "<" ++ p ++ ">"
+  show (VClo _ _ _) = "<closure>"
 

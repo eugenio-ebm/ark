@@ -3,13 +3,16 @@ module Main where
 import Parser ( parse )
 import Eval ( eval )
 
+evalStr :: String -> IO ()
+evalStr s = do
+  let expr = parse s
+  v <- eval expr
+  putStrLn (show v)
+
 evalFile :: String -> IO ()
 evalFile filename = do
   s <- readFile filename
-  let expr = parse s
-  let v = eval expr
-  putStrLn (show v)
-
+  evalStr s
 
 main :: IO ()
 main = putStrLn "Hello, Haskell!"
