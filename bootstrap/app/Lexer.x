@@ -8,6 +8,8 @@ $digit = 0-9
 
 $alpha = [a-zA-Z]
 
+$id = [a-zA-Z0-9']
+
 tokens :-
     $white+		    ;
     let			    { \_ -> TokenLet }
@@ -33,7 +35,7 @@ tokens :-
     otherwise		    { \_ -> TokenOtherwise }
     end		      	    { \_ -> TokenEnd }
 
-    $alpha+    	      	    { \s -> TokenId s }
+    $alpha $id*    	    { \s -> TokenId s }
     \' ($alpha|$digit) \'   { \s -> TokenChar (read s) }
     \" [^\"]* \"       	    { \s -> TokenStr (read s) }
     $digit+    	    	    { \s -> TokenInt (read s) }
