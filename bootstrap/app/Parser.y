@@ -4,7 +4,7 @@ module Parser ( parse ) where
 import Lexer ( Token(..) )
 import qualified Lexer
 
-import Syntax ( Expr(..), BinOp(..) )
+import Syntax ( Id, Expr(..), Pat(..), BinOp(..) )
 }
 
 %name parseExpr
@@ -27,11 +27,12 @@ import Syntax ( Expr(..), BinOp(..) )
     '('		{ TokenLP }
     ')'		{ TokenRP }
 
-    'true'	{ TokenTrue }
-    'false'	{ TokenFalse }
-
     '\\'	{ TokenBackslash }
     '->'	{ TokenArr }
+
+    'match'	{ TokenMatch }
+    '|'		{ TokenBar }
+    'end'	{ TokenEnd }
 
     id		{ TokenId $$ }
     str		{ TokenStr $$ }
@@ -46,7 +47,22 @@ Expr1 :: { Expr }
 	 | Expr2				{ $1 }
 
 Expr2 :: { Expr }
-      	 : Binop				{ $1 }
+	 : 'match' Expr2 MatchClauses 'end'	{ Match $2 $3 }
+      	 | Binop				{ $1 }
+
+MatchClauses :: { [(Pat, Expr)] }
+     	     	:				{ [] }
+	   	| MatchClause MatchClauses 	{ $1 : $2 }
+
+MatchClause :: { (Pat, Expr) }
+	       : '|' Pat '->' Expr		{ ($2, $4) }
+
+Pat :: { Pat }
+       : id ids					{ PCons $1 $2 }
+
+ids :: { [Id] }
+       :					{ [] }
+       | id ids 				{ $1 : $2 }
 
 Binop :: { Expr }
       	 : Binop1				{ $1 }
@@ -77,9 +93,8 @@ Expr4 :: { Expr }
 	 | str					{ Str $1 }
 	 | int					{ Int $1 }
       	 | '(' '-' int ')'			{ Int (-$3) }
-	 | 'true'				{ Bool True }
-	 | 'false'				{ Bool False }
 	 | '\\' id '->' Expr			{ Lam $2 $4 }
+	 | '(' ')' 				{ Unit }
 	 | '(' Expr ')'				{ $2 }
 
 {

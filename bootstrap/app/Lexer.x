@@ -25,11 +25,12 @@ tokens :-
     \(		    { \_ -> TokenLP }
     \)	       	    { \_ -> TokenRP }
 
-    true       	    { \_ -> TokenTrue }
-    false      	    { \_ -> TokenFalse }
-
     \\		    { \_ -> TokenBackslash }
     \->		    { \_ -> TokenArr }
+
+    match	    { \_ -> TokenMatch }
+    \|		    { \_ -> TokenBar }
+    end		    { \_ -> TokenEnd }
 
     $alpha+    	    { \s -> TokenId s }
     \" [^\"]* \"    { \s -> TokenStr (read s) }
@@ -52,11 +53,12 @@ data Token
   | TokenLP
   | TokenRP
 
-  | TokenTrue
-  | TokenFalse
-
   | TokenBackslash
   | TokenArr
+
+  | TokenMatch
+  | TokenBar
+  | TokenEnd
 
   | TokenId String
   | TokenStr String
